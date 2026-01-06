@@ -1,0 +1,67 @@
+# ========================
+# Rust / Cargo
+# ========================
+# Build output
+target/
+
+# Cargo.lock handle:
+# - Binary / Application project: commit Cargo.lock
+# - Library project: ignore Cargo.lock
+# Cargo.lock
+
+# Rust temp files
+*.rs.bk
+*.rmeta
+*.d
+*.o
+*.rlib
+
+# Cargo / clippy / rustfmt cache
+cargo-install/
+cargo-cache/
+.cargo/
+.clippy/
+.rustfmt.toml
+
+# ========================
+# System files
+# ========================
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ========================
+# IDE / Editor
+# ========================
+# VSCode
+.vscode/
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# ========================
+# Logs / Temporary files
+# ========================
+*.log
+*.tmp
+*.bak
+*.out
+
+# ========================
+# CI / CD / Other temp
+# ========================
+*.cache
+*.tmp
+*.pid
+*.seed
+
+
+# ========================
+# Customize Setting Here
+# ========================
+
