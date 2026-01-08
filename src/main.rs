@@ -1,15 +1,30 @@
 // my rust debug egui
-// use custom fonts to support Chinese
-mod customfonts;
-
+// system module
 use eframe::egui;
 use egui::{Button, RichText};
 use std::sync::mpsc::{self, Receiver, Sender};
+use std::thread;
 use std::time::{Duration, Instant};
 
-// my rust
+// my module
+mod customfonts;
+use customfonts::setup_custom_fonts;
 mod myrust;
 use myrust::my_rust;
+
+// thread
+#[derive(Debug, Clone, Copy)]
+enum ThreadId {
+    Timer,
+    Worker,
+    Ui,
+}
+
+#[derive(Debug)]
+enum Msg {
+    Tick { from: ThreadId },
+    Data { from: ThreadId, value: Vec<String> },
+}
 
 fn main() -> eframe::Result {
     // set initialize windows size
@@ -27,12 +42,11 @@ fn main() -> eframe::Result {
 
 // create My app structure
 struct MyApp {
-    rx: Receiver<()>,
-    tx: Sender<()>,
+    rx: Receiver<Msg>,
+    tx_work: Sender<Msg>,
     data_1: String,
     data_2: String,
     output_buffer: String,
-    run: bool,
     counter: f64,
 }
 
@@ -40,15 +54,14 @@ struct MyApp {
 impl MyApp {
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
         // set custom font
-        customfonts::setup_custom_fonts(&cc.egui_ctx);
-
-        // thread
-        let (tx, rx) = mpsc::channel();
-        let tx_thread = tx.clone();
-        let ctx = cc.egui_ctx.clone();
+        setup_custom_fonts(&cc.egui_ctx);
 
         // timer thread, trigger per 0.1s
-        std::thread::spawn(move || {
+        let (tx, rx) = mpsc::channel();
+        let tx_timer = tx.clone();
+        let ctx = cc.egui_ctx.clone();
+
+        thread::spawn(move || {
             // a fixed time interval to call the thread
             let interval = Duration::from_secs_f64(0.1);
             // get instant now
@@ -58,7 +71,11 @@ impl MyApp {
                 // get the next thread wake up time
                 next_tick += interval;
                 // trigger event
-                let _ = tx_thread.send(());
+                let _ = tx_timer
+                    .send(Msg::Tick {
+                        from: ThreadId::Timer,
+                    })
+                    .unwrap();
                 // repaint
                 ctx.request_repaint();
                 // check the remain time
@@ -75,14 +92,43 @@ impl MyApp {
             }
         });
 
+        // work thread
+        let (tx_work, rx_work) = mpsc::channel();
+        let tx_working = tx.clone();
+        let ctx = cc.egui_ctx.clone();
+
+        thread::spawn(move || {
+            while let Ok(msg) = rx_work.recv() {
+                match msg {
+                    Msg::Data {
+                        from: ThreadId::Ui,
+                        value,
+                    } => {
+                        // get data from ui and prepare data for my_rust
+                        let data_0 = value.get(0).map(|s| s.as_str()).unwrap();
+                        let data_1 = value.get(1).map(|s| s.as_str()).unwrap();
+                        let data_output = my_rust(data_0, data_1);
+                        // send data back to ui
+                        let data_send = Msg::Data {
+                            from: ThreadId::Worker,
+                            value: vec![data_output],
+                        };
+                        tx_working.send(data_send).unwrap();
+                        // repaint when job finish
+                        ctx.request_repaint();
+                    }
+                    _ => {}
+                }
+            }
+        });
+
         // default data
         Self {
             rx,
-            tx,
-            data_1: "Hello".to_owned(),
-            data_2: "World".to_owned(),
+            tx_work,
+            data_1: "".to_owned(),
+            data_2: "".to_owned(),
             output_buffer: "Hello Rust World".to_owned(),
-            run: false,
             counter: 0.0,
         }
     }
@@ -90,16 +136,25 @@ impl MyApp {
 
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        // run function
-        if self.run {
-            self.run = false;
-            // my rust
-            self.output_buffer.clear();
-            self.output_buffer = my_rust(&self.data_1, &self.data_2);
-        }
-        // timer trigger per 0.1 seconds
-        if let Ok(_) = self.rx.try_recv() {
-            self.counter += 0.1;
+        // Handle threads
+        while let Ok(msg) = self.rx.try_recv() {
+            match msg {
+                // Timer trigger per 0.1 seconds
+                Msg::Tick {
+                    from: ThreadId::Timer,
+                } => {
+                    self.counter += 0.1;
+                }
+                // Work thread process
+                Msg::Data {
+                    from: ThreadId::Worker,
+                    value,
+                } => {
+                    self.output_buffer.clear();
+                    self.output_buffer = value.join("\n");
+                }
+                _ => {}
+            }
         }
 
         // my egui layout
@@ -110,8 +165,8 @@ impl eframe::App for MyApp {
             });
             ui.add_space(20.0);
             // show counter
-            let str_output = format!("Counter: {:.1}", self.counter / 10.0);
-            ui.label(str_output);
+            let str_output = format!("Counter: {:.1}s", self.counter);
+            ui.label(egui::RichText::new(str_output).monospace().size(14.0));
 
             ui.add_space(20.0);
 
@@ -128,17 +183,37 @@ impl eframe::App for MyApp {
             });
             ui.add_space(20.0);
             // Run button
+            let mut run_clicked = false; // reset per frame 
+            // get enter key
+            if ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+                run_clicked = true;
+            }
             let run_button = Button::new(RichText::new("Run").size(18.0));
             if ui.add(run_button).clicked() {
-                self.run = true;
+                run_clicked = true;
+            };
+            if run_clicked {
+                // get data input
                 self.data_1 = self.data_1.trim().to_string();
                 self.data_2 = self.data_2.trim().to_string();
+
+                // thread: trig by button hit
+                let data_send = Msg::Data {
+                    from: ThreadId::Ui,
+                    value: vec![self.data_1.clone(), self.data_2.clone()],
+                };
+                self.tx_work.send(data_send).unwrap();
             };
             // label to print the data
             ui.add_space(20.0);
-            ui.label("Output:");
+            ui.label("Output 👉");
             ui.add_space(2.0);
-            ui.label(format!("{}", &self.output_buffer));
+            // ui.label(format!("{}", &self.output_buffer));
+            ui.label(
+                egui::RichText::new(format!("{}", &self.output_buffer))
+                    .monospace()
+                    .size(14.0),
+            );
         });
     }
 }
