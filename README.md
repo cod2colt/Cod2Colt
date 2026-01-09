@@ -1,10 +1,10 @@
 ## Hi there 👋
 
-# Cod2Colt
+# 🐠 Cod ⇢ Colt 🐎
 
 **🦀 A Rust Project 🦀**  
 **🖥️ A Code Farmer’s Rebirth ⌨️**  
-**🐠 Cod to Colt 🐎**  
+
 - 🌱 Here's a code farmer's rebirth from Cod to Colt
 - 🔭 Here's currently working on studying coding
 - 👩‍💻 Study Rust 🦀 and run the 🦀 code step by step 👨‍💻

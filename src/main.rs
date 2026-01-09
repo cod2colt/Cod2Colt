@@ -44,8 +44,8 @@ fn main() -> eframe::Result {
 struct MyApp {
     rx: Receiver<Msg>,
     tx_work: Sender<Msg>,
-    data_1: String,
-    data_2: String,
+    function: String,
+    data: String,
     output_buffer: String,
     counter: f64,
 }
@@ -105,9 +105,9 @@ impl MyApp {
                         value,
                     } => {
                         // get data from ui and prepare data for my_rust
-                        let data_0 = value.get(0).map(|s| s.as_str()).unwrap();
-                        let data_1 = value.get(1).map(|s| s.as_str()).unwrap();
-                        let data_output = my_rust(data_0, data_1);
+                        let function = value.get(0).map(|s| s.as_str()).unwrap();
+                        let data = value.get(1).map(|s| s.as_str()).unwrap();
+                        let data_output = my_rust(function, data);
                         // send data back to ui
                         let data_send = Msg::Data {
                             from: ThreadId::Worker,
@@ -126,8 +126,8 @@ impl MyApp {
         Self {
             rx,
             tx_work,
-            data_1: "".to_owned(),
-            data_2: "".to_owned(),
+            function: "".to_owned(),
+            data: "".to_owned(),
             output_buffer: "Hello Rust World".to_owned(),
             counter: 0.0,
         }
@@ -173,13 +173,13 @@ impl eframe::App for MyApp {
             // input
             ui.horizontal(|ui| {
                 // input data 1
-                let data_1_label = ui.label("Data 1: ");
-                ui.text_edit_singleline(&mut self.data_1)
-                    .labelled_by(data_1_label.id);
+                let function_label = ui.label("Function: ");
+                ui.text_edit_singleline(&mut self.function)
+                    .labelled_by(function_label.id);
                 // input data 2
-                let data_2_label = ui.label("Data 2: ");
-                ui.text_edit_singleline(&mut self.data_2)
-                    .labelled_by(data_2_label.id);
+                let data_label = ui.label("Data: ");
+                ui.text_edit_singleline(&mut self.data)
+                    .labelled_by(data_label.id);
             });
             ui.add_space(20.0);
             // Run button
@@ -194,32 +194,34 @@ impl eframe::App for MyApp {
             };
             if run_clicked {
                 // get data input
-                self.data_1 = self.data_1.trim().to_string();
-                self.data_2 = self.data_2.trim().to_string();
+                self.function = self.function.trim().to_string();
+                self.data = self.data.trim().to_string();
 
                 // thread: trig by button hit
                 let data_send = Msg::Data {
                     from: ThreadId::Ui,
-                    value: vec![self.data_1.clone(), self.data_2.clone()],
+                    value: vec![self.function.clone(), self.data.clone()],
                 };
                 self.tx_work.send(data_send).unwrap();
             };
             // add test code run buttons
             ui.horizontal(|ui| {
-                let run_button = Button::new(RichText::new("Data").size(18.0));
-                if ui.add(run_button).clicked() {
-                    // run Data
-                    // get data input
-                    self.data_1 = "Data".to_string();
-                    self.data_2 = self.data_2.trim().to_string();
+                for fun in myrust::FUNCTION {
+                    let run_button = Button::new(RichText::new(fun).size(18.0));
+                    if ui.add(run_button).clicked() {
+                        // run Data
+                        // get data input
+                        self.function = fun.to_string();
+                        self.data = self.data.trim().to_string();
 
-                    // thread: trig by button hit
-                    let data_send = Msg::Data {
-                        from: ThreadId::Ui,
-                        value: vec![self.data_1.clone(), self.data_2.clone()],
+                        // thread: trig by button hit
+                        let data_send = Msg::Data {
+                            from: ThreadId::Ui,
+                            value: vec![self.function.clone(), self.data.clone()],
+                        };
+                        self.tx_work.send(data_send).unwrap();
                     };
-                    self.tx_work.send(data_send).unwrap();
-                };
+                }
             });
             // label to print the data
             ui.add_space(20.0);
