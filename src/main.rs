@@ -204,16 +204,32 @@ impl eframe::App for MyApp {
                 };
                 self.tx_work.send(data_send).unwrap();
             };
+            // add test code run buttons
+            ui.horizontal(|ui| {
+                let run_button = Button::new(RichText::new("Data").size(18.0));
+                if ui.add(run_button).clicked() {
+                    // run Data
+                    // get data input
+                    self.data_1 = "Data".to_string();
+                    self.data_2 = self.data_2.trim().to_string();
+
+                    // thread: trig by button hit
+                    let data_send = Msg::Data {
+                        from: ThreadId::Ui,
+                        value: vec![self.data_1.clone(), self.data_2.clone()],
+                    };
+                    self.tx_work.send(data_send).unwrap();
+                };
+            });
             // label to print the data
             ui.add_space(20.0);
             ui.label("Output 👉");
             ui.add_space(2.0);
-            // ui.label(format!("{}", &self.output_buffer));
-            ui.label(
-                egui::RichText::new(format!("{}", &self.output_buffer))
-                    .monospace()
-                    .size(14.0),
-            );
+            egui::ScrollArea::vertical()
+                .max_height(1024.0)
+                .show(ui, |ui| {
+                    ui.label(format!("{}", &self.output_buffer));
+                });
         });
     }
 }
