@@ -206,12 +206,12 @@ impl eframe::App for MyApp {
             };
             // add test code run buttons
             ui.horizontal(|ui| {
-                for fun in myrust::FUNCTION {
-                    let run_button = Button::new(RichText::new(fun).size(18.0));
+                for my_fun in myrust::MY_TEST_FUN.iter() {
+                    let run_button = Button::new(RichText::new(my_fun.name).size(18.0));
                     if ui.add(run_button).clicked() {
                         // run Data
                         // get data input
-                        self.function = fun.to_string();
+                        self.function = my_fun.name.to_string();
                         self.data = self.data.trim().to_string();
 
                         // thread: trig by button hit

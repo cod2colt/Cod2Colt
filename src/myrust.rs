@@ -33,10 +33,25 @@ impl MyPrint {
     }
 }
 
-// function list
-pub const FUNCTION: [&str; 2] = ["Data", "Flow"];
-// function pointer
-pub const TEST_FUN: [fn(&mut MyPrint); 2] = [my_data, my_flow];
+// my function structure
+pub struct MyFunction {
+    // function name
+    pub name: &'static str,
+    // function pointer
+    pub func: fn(&mut MyPrint),
+}
+
+// my test function
+pub const MY_TEST_FUN: [MyFunction; 2] = [
+    MyFunction {
+        name: "Data",
+        func: my_data,
+    },
+    MyFunction {
+        name: "Flow",
+        func: my_flow,
+    },
+];
 
 // my rust
 pub fn my_rust(function: &str, data: &str) -> String {
@@ -54,8 +69,8 @@ pub fn my_rust(function: &str, data: &str) -> String {
     }
 
     // parser function
-    if let Some(pos) = FUNCTION.iter().position(|&f| f == function) {
-        TEST_FUN[pos](&mut my_print);
+    if let Some(cmd) = MY_TEST_FUN.iter().find(|c| c.name == function) {
+        (cmd.func)(&mut my_print);
     } else {
         // default
         my_print.print(function);
