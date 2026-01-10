@@ -1,40 +1,48 @@
 // my print
 pub struct MyPrint {
-    value: Vec<String>,
+    input: Vec<String>,
+    output: Vec<String>,
 }
 
 #[allow(dead_code)]
 impl MyPrint {
     // new a MyPrint
     pub fn new() -> Self {
-        Self { value: Vec::new() }
+        Self {
+            input: Vec::new(),
+            output: Vec::new(),
+        }
     }
     // get value
     pub fn get(&self) -> String {
-        self.value.concat()
+        self.output.concat()
     }
     // get value, and destroy/drop my print, release my print
     pub fn flush(self) -> String {
-        self.value.into_iter().collect()
+        self.output.into_iter().collect()
     }
     // print a line
     pub fn print_line<S: Into<String>>(&mut self, s: S) {
         let mut line = s.into();
         line.push('\n');
-        self.value.push(line);
+        self.output.push(line);
     }
     // append
     pub fn print<S: Into<String>>(&mut self, s: S) {
-        self.value.push(s.into());
+        self.output.push(s.into());
     }
 }
 
 // function list
 pub const FUNCTION: [&str; 2] = ["Data", "Flow"];
+// function pointer
+pub const TEST_FUN: [fn(&mut MyPrint); 2] = [my_data, my_flow];
 
 // my rust
 pub fn my_rust(function: &str, data: &str) -> String {
     let mut my_print = MyPrint::new();
+    // set the input data
+    my_print.input.push(data.into());
 
     // show the title
     for _i in 0..99 {
@@ -46,23 +54,13 @@ pub fn my_rust(function: &str, data: &str) -> String {
     }
 
     // parser function
-    match function {
-        // Function: Data
-        f if f == FUNCTION[0] => {
-            my_print.print_line("=== My Data ===");
-            my_data(&mut my_print);
-        }
-        // Function: Flow
-        f if f == FUNCTION[1] => {
-            my_print.print_line("=== My Flow ===");
-            my_flow(&mut my_print);
-        }
+    if let Some(pos) = FUNCTION.iter().position(|&f| f == function) {
+        TEST_FUN[pos](&mut my_print);
+    } else {
         // default
-        _ => {
-            my_print.print(function);
-            my_print.print(" ");
-            my_print.print(data);
-        }
+        my_print.print(function);
+        my_print.print(" ");
+        my_print.print(data);
     }
     my_print.flush()
 }
@@ -105,23 +103,46 @@ fn my_flow(print_out: &mut MyPrint) {
     let mut i = 0;
     loop {
         i += 1;
-        print_out.print_line(format!("loop: {}", i));
+        print_out.print(format!("loop: {}. ", i));
         if i > 8 {
             break;
         }
     }
-
+    print_out.print("\n");
     // while
     print_out.print_line("=== while ===");
     i = 0;
     while i < 8 {
         i += 1;
-        print_out.print_line(format!("while: {}", i));
+        print_out.print(format!("while: {}. ", i));
     }
+    print_out.print("\n");
 
     // for
     print_out.print_line("=== for ===");
     for i in 0..8 {
-        print_out.print_line(format!("while: {}", i));
+        print_out.print(format!("for: {}. ", i));
+    }
+    print_out.print("\n");
+
+    // match
+    print_out.print_line("=== match ===");
+    let what_match = "Yes";
+    match what_match {
+        "Yes" => {
+            print_out.print_line("Match: Yes");
+        }
+        _ => {
+            print_out.print_line("Match: No");
+        }
+    }
+    let match_case: [&str; 2] = ["Yes", "No"];
+    match what_match {
+        f if f == match_case[0] => {
+            print_out.print_line("Match: if if f == Yes");
+        }
+        _ => {
+            print_out.print_line("Match: if if f == No");
+        }
     }
 }
