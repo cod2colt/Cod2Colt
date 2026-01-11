@@ -190,6 +190,68 @@ fn my_data(print_out: &mut MyPrint) {
             print_out.print(format!("{} ", b));
         }
         print_out.print('\n');
+
+        // into Vec<u8>
+        let v: Vec<u8> = s.clone().into_bytes();
+        print_out.print_line(format!("Vec<u8>: {:?}", v));
+
+        // append String
+        let s2 = String::from(" Rust");
+        s.push_str(&s2); // push_str &str
+        print_out.print_line(format!("After append s2: {}", s));
+
+        // pop / truncate / clear
+        s.pop();
+        print_out.print_line(format!("After pop: {}", s));
+
+        s.truncate(5);
+        print_out.print_line(format!("After truncate(5): {}", s));
+
+        s.clear();
+        print_out.print_line(format!("After clear: {}", s));
+    }
+
+    // Box
+    print_out.print_line("\n=== Box List ===");
+    {
+        // Box block
+        enum MyBoxList {
+            ListNode(i32, Box<MyBoxList>),
+            End,
+        }
+        use MyBoxList::{End, ListNode};
+
+        let mut my_list = ListNode(0, Box::new(End));
+
+        // add a node
+        let current: &mut MyBoxList = &mut my_list;
+        let a_node = ListNode(1, Box::new(End));
+        if let ListNode(_, next) = current {
+            *next = Box::new(a_node);
+        }
+
+        // append b node
+        let b_node = ListNode(2, Box::new(End));
+        let mut current = &mut my_list;
+
+        while let ListNode(_, next) = current {
+            current = next;
+        }
+        *current = b_node;
+
+        // append c node
+        let c_node = ListNode(3, Box::new(End));
+        if let ListNode(_, next) = current {
+            *next = Box::new(c_node);
+        }
+
+        // print all
+        let mut current = &my_list;
+        while let ListNode(v, next) = current {
+            print_out.print(format!("List: {} ", v));
+            current = next;
+        }
+        print_out.print_line(" End ");
     }
 }
 
