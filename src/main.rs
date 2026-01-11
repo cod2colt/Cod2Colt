@@ -29,7 +29,8 @@ enum Msg {
 fn main() -> eframe::Result {
     // set initialize windows size
     let options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default(),
+        viewport: egui::ViewportBuilder::default()
+            .with_inner_size(egui::Vec2::new(1920.0 / 2.0, 1028.0 / 2.0)),
         ..Default::default()
     };
     // create my app
@@ -163,47 +164,51 @@ impl eframe::App for MyApp {
             ui.vertical_centered(|ui| {
                 ui.heading("My Rust egui");
             });
-            ui.add_space(20.0);
-            // show counter
-            let str_output = format!("Counter: {:.1}s", self.counter);
-            ui.label(egui::RichText::new(str_output).monospace().size(14.0));
-
-            ui.add_space(20.0);
 
             // input
             ui.horizontal(|ui| {
+                // show counter
+                ui.label(egui::RichText::new("Counter: ").size(14.0));
+                let str_output = format!("{:4.1}s", self.counter);
+                ui.label(egui::RichText::new(str_output).monospace().size(14.0));
+                ui.add_space(20.0);
+
                 // input data 1
                 let function_label = ui.label("Function: ");
                 ui.text_edit_singleline(&mut self.function)
                     .labelled_by(function_label.id);
+                ui.add_space(20.0);
+
                 // input data 2
                 let data_label = ui.label("Data: ");
                 ui.text_edit_singleline(&mut self.data)
                     .labelled_by(data_label.id);
-            });
-            ui.add_space(20.0);
-            // Run button
-            let mut run_clicked = false; // reset per frame 
-            // get enter key
-            if ui.input(|i| i.key_pressed(egui::Key::Enter)) {
-                run_clicked = true;
-            }
-            let run_button = Button::new(RichText::new("Run").size(18.0));
-            if ui.add(run_button).clicked() {
-                run_clicked = true;
-            };
-            if run_clicked {
-                // get data input
-                self.function = self.function.trim().to_string();
-                self.data = self.data.trim().to_string();
 
-                // thread: trig by button hit
-                let data_send = Msg::Data {
-                    from: ThreadId::Ui,
-                    value: vec![self.function.clone(), self.data.clone()],
+                ui.add_space(20.0);
+
+                // Run button
+                let mut run_clicked = false; // reset per frame 
+                // get enter key
+                if ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+                    run_clicked = true;
+                }
+                let run_button = Button::new(RichText::new("Run").size(16.0));
+                if ui.add(run_button).clicked() {
+                    run_clicked = true;
                 };
-                self.tx_work.send(data_send).unwrap();
-            };
+                if run_clicked {
+                    // get data input
+                    self.function = self.function.trim().to_string();
+                    self.data = self.data.trim().to_string();
+
+                    // thread: trig by button hit
+                    let data_send = Msg::Data {
+                        from: ThreadId::Ui,
+                        value: vec![self.function.clone(), self.data.clone()],
+                    };
+                    self.tx_work.send(data_send).unwrap();
+                };
+            });
             // add test code run buttons
             ui.horizontal(|ui| {
                 for my_fun in myrust::MY_TEST_FUN.iter() {
@@ -224,7 +229,6 @@ impl eframe::App for MyApp {
                 }
             });
             // label to print the data
-            ui.add_space(20.0);
             ui.label("Output 👉");
             ui.add_space(2.0);
             egui::ScrollArea::vertical()

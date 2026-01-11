@@ -21,6 +21,12 @@ impl MyPrint {
     pub fn flush(self) -> String {
         self.output.into_iter().collect()
     }
+    // reset my print
+    pub fn reset(&mut self) {
+        self.input.clear();
+        self.output.clear();
+    }
+
     // print a line
     pub fn print_line<S: Into<String>>(&mut self, s: S) {
         let mut line = s.into();
@@ -42,7 +48,11 @@ pub struct MyFunction {
 }
 
 // my test function
-pub const MY_TEST_FUN: [MyFunction; 2] = [
+pub const MY_TEST_FUN: [MyFunction; 3] = [
+    MyFunction {
+        name: "Clear",
+        func: my_clear,
+    },
     MyFunction {
         name: "Data",
         func: my_data,
@@ -60,13 +70,14 @@ pub fn my_rust(function: &str, data: &str) -> String {
     my_print.input.push(data.into());
 
     // show the title
-    for _i in 0..99 {
+    for _i in 0..120 {
         my_print.print('=');
     }
     my_print.print_line("\nMy Rust Course");
-    for _i in 0..99 {
+    for _i in 0..120 {
         my_print.print('=');
     }
+    my_print.print('\n');
 
     // parser function
     if let Some(cmd) = MY_TEST_FUN.iter().find(|c| c.name == function) {
@@ -78,6 +89,11 @@ pub fn my_rust(function: &str, data: &str) -> String {
         my_print.print(data);
     }
     my_print.flush()
+}
+
+// clear output
+fn my_clear(print_out: &mut MyPrint) {
+    print_out.reset();
 }
 
 // data type
@@ -114,17 +130,17 @@ fn my_data(print_out: &mut MyPrint) {
     print_out.print_line(format!("{} {} {} {}", a, b, c, d));
 
     // heap
-    print_out.print_line("\n======== Heap ========");
+    print_out.print_line("======== Heap ========");
     // vec
     {
         // vec block
         print_out.print_line("=== Vec ===");
-        print_out.print_line("for i");
+        print_out.print_line("👉 for i");
         let mut v = vec![11, 22, 33, 44, 55];
         for i in 0..v.len() {
             print_out.print(format!("{}:{} ", i, v[i]));
         }
-        print_out.print_line("\nfor get");
+        print_out.print_line("\n👉 for get");
         for i in 0..=v.len() {
             if let Some(d) = v.get(i) {
                 print_out.print(format!("{}:{} ", i, d));
@@ -132,18 +148,18 @@ fn my_data(print_out: &mut MyPrint) {
                 print_out.print(format!("{}:outbound! ", i));
             }
         }
-        print_out.print_line("\nfor in vec");
+        print_out.print_line("\n👉 for in vec");
         for i in &v {
             print_out.print(format!("{} ", i));
         }
-        print_out.print_line("\niter in vec");
+        print_out.print_line("\n👉 iter in vec");
         let s = &v
             .iter()
             .map(|v| v.to_string())
             .collect::<Vec<_>>()
             .join(" ");
         print_out.print_line(s);
-        print_out.print_line("\npush and pop vec");
+        print_out.print_line("👉 push and pop vec");
         v.push(66);
         v.push(77);
         for i in &v {
