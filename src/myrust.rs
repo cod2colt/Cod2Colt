@@ -155,6 +155,42 @@ fn my_data(print_out: &mut MyPrint) {
             print_out.print(format!("pop {}:{} ", i, d));
         }
     }
+
+    // String
+    print_out.print_line("\n=== String ===");
+
+    {
+        // String block
+        let mut s = String::from("Hello");
+        print_out.print_line(format!("Initial string: {}", s));
+
+        // push char
+        s.push(' ');
+        s.push('w');
+        s.push('o');
+        s.push('r');
+        s.push('l');
+        s.push('d');
+        print_out.print_line(format!("After push chars: {}", s));
+
+        // push str
+        s.push_str("!!!");
+        print_out.print_line(format!("After push str: {}", s));
+
+        // chars iter
+        print_out.print_line(format!("Chars:"));
+        for c in s.chars() {
+            print_out.print(format!("{} ", c));
+        }
+        print_out.print('\n');
+
+        // iter bytes
+        print_out.print_line(format!("Bytes:"));
+        for b in s.bytes() {
+            print_out.print(format!("{} ", b));
+        }
+        print_out.print('\n');
+    }
 }
 
 // control flow
