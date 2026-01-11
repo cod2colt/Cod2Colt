@@ -26,7 +26,6 @@ impl MyPrint {
         self.input.clear();
         self.output.clear();
     }
-
     // print a line
     pub fn print_line<S: Into<String>>(&mut self, s: S) {
         let mut line = s.into();
@@ -82,13 +81,43 @@ pub fn my_rust(function: &str, data: &str) -> String {
     // parser function
     if let Some(cmd) = MY_TEST_FUN.iter().find(|c| c.name == function) {
         (cmd.func)(&mut my_print);
+    } else if ["ferris", "rust"].contains(&function) {
+        my_print.input.push(function.into());
+        my_ferris(&mut my_print);
     } else {
+        my_print.input.push("Rust".into());
+        my_ferris(&mut my_print);
         // default
-        my_print.print(function);
+        my_print.print(format!("<{}>", function));
         my_print.print(" ");
-        my_print.print(data);
+        my_print.print(format!("<{}>", data));
     }
     my_print.flush()
+}
+
+// hi, rust and ferris
+fn my_ferris(print_out: &mut MyPrint) {
+    // get func and name
+    let mut func: String = print_out.input.pop().unwrap_or("Rustaceans".to_string());
+    if func.is_empty() {
+        func = "Rust".to_string();
+    }
+    let mut name: String = print_out.input.pop().unwrap_or("Rustaceans".to_string());
+    if name.is_empty() {
+        name = "Rustaceans".to_string();
+    }
+
+    let ferris = r#"
+                _~^~^~_
+            \) /  o o  \ (/
+              '_   -   _'
+              / '-----' \
+    "#;
+    print_out.print('\n');
+    print_out.print_line(format!("         < Hello, {} and {}! >", func, name));
+    print_out.print_line("                \\");
+    print_out.print("                 \\");
+    print_out.print_line(format!("{}", ferris));
 }
 
 // clear output

@@ -145,6 +145,7 @@ impl eframe::App for MyApp {
                     from: ThreadId::Timer,
                 } => {
                     self.counter += 0.1;
+                    self.counter %= 10000.0;
                 }
                 // Work thread process
                 Msg::Data {
@@ -169,22 +170,22 @@ impl eframe::App for MyApp {
             ui.horizontal(|ui| {
                 // show counter
                 ui.label(egui::RichText::new("Counter: ").size(14.0));
-                let str_output = format!("{:4.1}s", self.counter);
+                let str_output = format!("{:06.1}s", self.counter);
                 ui.label(egui::RichText::new(str_output).monospace().size(14.0));
-                ui.add_space(20.0);
+                ui.add_space(5.0);
 
                 // input data 1
                 let function_label = ui.label("Function: ");
                 ui.text_edit_singleline(&mut self.function)
                     .labelled_by(function_label.id);
-                ui.add_space(20.0);
+                ui.add_space(5.0);
 
                 // input data 2
                 let data_label = ui.label("Data: ");
                 ui.text_edit_singleline(&mut self.data)
                     .labelled_by(data_label.id);
 
-                ui.add_space(20.0);
+                ui.add_space(5.0);
 
                 // Run button
                 let mut run_clicked = false; // reset per frame 
@@ -208,11 +209,16 @@ impl eframe::App for MyApp {
                     };
                     self.tx_work.send(data_send).unwrap();
                 };
+                // exit button
+                let exit_button = Button::new(RichText::new("Exit").size(16.0));
+                if ui.add(exit_button).clicked() {
+                    ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                };
             });
             // add test code run buttons
             ui.horizontal(|ui| {
                 for my_fun in myrust::MY_TEST_FUN.iter() {
-                    let run_button = Button::new(RichText::new(my_fun.name).size(18.0));
+                    let run_button = Button::new(RichText::new(my_fun.name).size(16.0));
                     if ui.add(run_button).clicked() {
                         // run Data
                         // get data input
@@ -234,7 +240,7 @@ impl eframe::App for MyApp {
             egui::ScrollArea::vertical()
                 .max_height(1024.0)
                 .show(ui, |ui| {
-                    ui.label(format!("{}", &self.output_buffer));
+                    ui.label(egui::RichText::new(&self.output_buffer).monospace());
                 });
         });
     }
