@@ -10,8 +10,8 @@
 - 👩‍💻 Study Rust 🦀 and run the 🦀 code step by step 👨‍💻
 
 ## Development Environment
-[![Rust](https://img.shields.io/badge/Rust-1.92-black?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
-[![VSCode](https://img.shields.io/badge/VSCode-1.107.1-blue?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
+[![Rust](https://img.shields.io/badge/Rust-DEA584?style=for-the-badge&logo=rust&logoColor=black)](https://www.rust-lang.org/)
+[![VSCode](https://img.shields.io/badge/VSCode-blue?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
 [![macOS](https://img.shields.io/badge/macOS-E5E5E5?style=for-the-badge&logo=apple&logoColor=black)](https://www.apple.com/macos/)
 
 ## Github

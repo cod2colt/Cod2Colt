@@ -109,6 +109,52 @@ fn my_data(print_out: &mut MyPrint) {
     print_out.print(format!("{} ", my_tuple.1));
     print_out.print(format!("{} ", my_tuple.2));
     print_out.print(format!("{} ", my_tuple.3));
+    print_out.print_line("\nDestruct tuple");
+    let (a, b, c, d) = my_tuple;
+    print_out.print_line(format!("{} {} {} {}", a, b, c, d));
+
+    // heap
+    print_out.print_line("\n======== Heap ========");
+    // vec
+    {
+        // vec block
+        print_out.print_line("=== Vec ===");
+        print_out.print_line("for i");
+        let mut v = vec![11, 22, 33, 44, 55];
+        for i in 0..v.len() {
+            print_out.print(format!("{}:{} ", i, v[i]));
+        }
+        print_out.print_line("\nfor get");
+        for i in 0..=v.len() {
+            if let Some(d) = v.get(i) {
+                print_out.print(format!("{}:{} ", i, d));
+            } else {
+                print_out.print(format!("{}:outbound! ", i));
+            }
+        }
+        print_out.print_line("\nfor in vec");
+        for i in &v {
+            print_out.print(format!("{} ", i));
+        }
+        print_out.print_line("\niter in vec");
+        let s = &v
+            .iter()
+            .map(|v| v.to_string())
+            .collect::<Vec<_>>()
+            .join(" ");
+        print_out.print_line(s);
+        print_out.print_line("\npush and pop vec");
+        v.push(66);
+        v.push(77);
+        for i in &v {
+            print_out.print(format!("{} ", i));
+        }
+        print_out.print('\n');
+        for i in 0..=v.len() {
+            let d = v.pop().unwrap_or(-1);
+            print_out.print(format!("pop {}:{} ", i, d));
+        }
+    }
 }
 
 // control flow
