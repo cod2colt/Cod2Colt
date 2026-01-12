@@ -9,6 +9,10 @@
 - 🔭 Here's currently working on studying coding
 - 👩‍💻 Study Rust 🦀 and run the 🦀 code step by step 👨‍💻
 
+## Projects
+- **Cod2Colt**: Practice idiomatic **Rust** and build a gui app
+- **FlyRust**: A **game** developed in **Rust** using **egui**, following the **MVVM** architecture.
+
 ## Development Environment
 [![Rust](https://img.shields.io/badge/Rust-DEA584?style=for-the-badge&logo=rust&logoColor=black)](https://www.rust-lang.org/)
 [![VSCode](https://img.shields.io/badge/VSCode-blue?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
