@@ -9,9 +9,19 @@
 - 🔭 Here's currently working on studying coding
 - 👩‍💻 Study Rust 🦀 and run the 🦀 code step by step 👨‍💻
 
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=Ir015UtSAA0">
+    <br>▶️ Watch Demo on YouTube</br>
+    <img src="./assets/screenshots/demo.png" width="320" />
+  </a>
+</p>
+
+
 ## Projects
-- **Cod2Colt**: Practice idiomatic **Rust** and build a gui app
-- **FlyRust**: A **game** developed in **Rust** using **egui**, following the **MVVM** architecture.
+- [**🦀 Cod2Colt**](https://github.com/cod2colt/Cod2Colt)  
+Practice idiomatic **Rust** and build a gui app
+- [**🎮 FlyRust**](https://github.com/cod2colt/FlyRust)  
+A **game** developed in **Rust** using **egui**, following the **MVVM** architecture.
 
 ## Development Environment
 [![Rust](https://img.shields.io/badge/Rust-DEA584?style=for-the-badge&logo=rust&logoColor=black)](https://www.rust-lang.org/)
