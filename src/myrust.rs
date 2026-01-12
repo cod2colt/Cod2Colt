@@ -47,7 +47,7 @@ pub struct MyFunction {
 }
 
 // my test function
-pub const MY_TEST_FUN: [MyFunction; 3] = [
+pub const MY_TEST_FUN: [MyFunction; 4] = [
     MyFunction {
         name: "Clear",
         func: my_clear,
@@ -57,10 +57,17 @@ pub const MY_TEST_FUN: [MyFunction; 3] = [
         func: my_data,
     },
     MyFunction {
+        name: "Enum",
+        func: my_enum,
+    },
+    MyFunction {
         name: "Flow",
         func: my_flow,
     },
 ];
+
+// hidden functions
+const HIDDEN_FUNC: [&str; 2] = ["ferris", "rust"];
 
 // my rust
 pub fn my_rust(function: &str, data: &str) -> String {
@@ -81,23 +88,20 @@ pub fn my_rust(function: &str, data: &str) -> String {
     // parser function
     if let Some(cmd) = MY_TEST_FUN.iter().find(|c| c.name == function) {
         (cmd.func)(&mut my_print);
+    } else if HIDDEN_FUNC
+        .iter()
+        .any(|&f| f.eq_ignore_ascii_case(function))
+    {
+        // hidden functions
+        my_print.input.push(function.into());
+        my_ferris(&mut my_print);
     } else {
-        // process hidden function
-        const HIDDEN_FUNC: [&str; 2] = ["ferris", "rust"];
-        if HIDDEN_FUNC
-            .iter()
-            .any(|&f| f.eq_ignore_ascii_case(function))
-        {
-            my_print.input.push(function.into());
-            my_ferris(&mut my_print);
-        } else {
-            my_print.input.push("Rust".into());
-            my_ferris(&mut my_print);
-            // default
-            my_print.print(format!("<{}>", function));
-            my_print.print(" ");
-            my_print.print(format!("<{}>", data));
-        }
+        // default
+        my_print.input.push("Rust".into());
+        my_ferris(&mut my_print);
+        my_print.print(format!("<{}>", function));
+        my_print.print(" ");
+        my_print.print(format!("<{}>", data));
     }
     my_print.flush()
 }
@@ -305,6 +309,71 @@ fn my_data(print_out: &mut MyPrint) {
         }
         print_out.print_line(" End ");
     }
+}
+
+// enum and data match
+fn my_enum(print_out: &mut MyPrint) {
+    // enum
+    #[allow(dead_code)]
+    enum Dir {
+        Up,
+        Down,
+        Left,
+        Right,
+        Center,
+    }
+    impl Dir {
+        fn as_char(&self) -> char {
+            match self {
+                Dir::Up => '↑',
+                Dir::Down => '↓',
+                Dir::Left => '←',
+                Dir::Right => '→',
+                Dir::Center => '+',
+            }
+        }
+    }
+    let d = Dir::Down;
+    let mut n = Dir::Up;
+    print_out.print_line("=== Enum ===");
+    print_out.print_line(format!("Dir: {} ", d.as_char()));
+    print_out.print_line(format!("Dir: {} ", n.as_char()));
+    n = d;
+    print_out.print_line(format!("Dir: {} ", n.as_char()));
+
+    // option and some
+    print_out.print_line("=== Option and Some ===");
+    // option
+    let a: Option<i32> = Some(42);
+    let b: Option<i32> = None;
+
+    // match
+    match a {
+        Some(x) => print_out.print_line(format!("a contains: {}", x)),
+        None => print_out.print_line("a is None"),
+    }
+
+    match b {
+        Some(x) => print_out.print_line(format!("b contains: {}", x)),
+        None => print_out.print_line("b is None"),
+    }
+
+    // if let
+    if let Some(x) = a {
+        print_out.print_line(format!("if let: a contains: {}", x));
+    } else {
+        print_out.print_line(format!("if let: a is None"));
+    }
+    if let Some(x) = b {
+        print_out.print_line(format!("if let: b contains: {}", x));
+    } else {
+        print_out.print_line(format!("if let: b is None"));
+    }
+
+    // unwrap or default
+    print_out.print_line("unwrap or default");
+    print_out.print_line(format!("a.unwrap_or(0) = {}", a.unwrap_or(0)));
+    print_out.print_line(format!("b.unwrap_or(0) = {}", b.unwrap_or(0)));
 }
 
 // control flow
