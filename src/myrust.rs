@@ -47,7 +47,7 @@ pub struct MyFunction {
 }
 
 // my test function
-pub const MY_TEST_FUN: [MyFunction; 4] = [
+pub const MY_TEST_FUN: [MyFunction; 5] = [
     MyFunction {
         name: "Clear",
         func: my_clear,
@@ -63,6 +63,10 @@ pub const MY_TEST_FUN: [MyFunction; 4] = [
     MyFunction {
         name: "Flow",
         func: my_flow,
+    },
+    MyFunction {
+        name: "Error",
+        func: my_error,
     },
 ];
 
@@ -425,4 +429,52 @@ fn my_flow(print_out: &mut MyPrint) {
             print_out.print_line("Match: if if f == No");
         }
     }
+}
+
+// result and error handling
+fn my_error(print_out: &mut MyPrint) {
+    print_out.print_line("=== Result and Error Handling ===");
+
+    #[derive(Debug)]
+    enum AgeError {
+        NotANumber,
+        Negative,
+        TooLarge,
+    }
+    fn parse_age(input: &str) -> Result<u8, AgeError> {
+        let age: i32 = input.parse().map_err(|_| AgeError::NotANumber)?;
+
+        if age < 0 {
+            return Err(AgeError::Negative);
+        }
+
+        if age > 130 {
+            return Err(AgeError::TooLarge);
+        }
+
+        Ok(age as u8)
+    }
+
+    let inputs: [&str; 4] = ["25", "-3", "twenty", "200"];
+    for s in inputs {
+        match parse_age(s) {
+            Ok(age) => print_out.print_line(format!("age = {}", age)),
+            Err(AgeError::NotANumber) => print_out.print_line(format!("'{}' is not a number", s)),
+            Err(AgeError::Negative) => print_out.print_line(format!("'{}' cannot be negative", s)),
+            Err(AgeError::TooLarge) => {
+                print_out.print_line(format!("'{}' is unrealistically large", s))
+            }
+        }
+    }
+
+    // unwrap
+    let age = parse_age("abc").unwrap_or(0);
+    print_out.print_line("=== unwrap_or(0) error to default value===");
+    print_out.print_line(format!("age = {}", age));
+    print_out.print_line("=== unwrap_or_else ===");
+    let age = parse_age("200").unwrap_or_else(|err| {
+        print_out.print_line(format!("error: {:?}", err));
+        0
+    });
+    print_out.print_line(format!("age = {}", age));
 }
