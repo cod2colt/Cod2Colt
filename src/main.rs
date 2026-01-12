@@ -49,6 +49,7 @@ struct MyApp {
     data: String,
     output_buffer: String,
     counter: f64,
+    hello: bool,
 }
 
 // impl methods fro my app
@@ -127,10 +128,11 @@ impl MyApp {
         Self {
             rx,
             tx_work,
-            function: "".to_owned(),
-            data: "".to_owned(),
+            function: "Rust".to_owned(),
+            data: "Rustaceans".to_owned(),
             output_buffer: "Hello Rust World".to_owned(),
             counter: 0.0,
+            hello: true,
         }
     }
 }
@@ -189,6 +191,13 @@ impl eframe::App for MyApp {
 
                 // Run button
                 let mut run_clicked = false; // reset per frame 
+                // show the hello frame
+                if self.hello {
+                    self.function = "Rust".to_string();
+                    self.data = "Rustaceans".to_string();
+                    self.hello = false;
+                    run_clicked = true;
+                }
                 // get enter key
                 if ui.input(|i| i.key_pressed(egui::Key::Enter)) {
                     run_clicked = true;

@@ -81,16 +81,23 @@ pub fn my_rust(function: &str, data: &str) -> String {
     // parser function
     if let Some(cmd) = MY_TEST_FUN.iter().find(|c| c.name == function) {
         (cmd.func)(&mut my_print);
-    } else if ["ferris", "rust"].contains(&function) {
-        my_print.input.push(function.into());
-        my_ferris(&mut my_print);
     } else {
-        my_print.input.push("Rust".into());
-        my_ferris(&mut my_print);
-        // default
-        my_print.print(format!("<{}>", function));
-        my_print.print(" ");
-        my_print.print(format!("<{}>", data));
+        // process hidden function
+        const HIDDEN_FUNC: [&str; 2] = ["ferris", "rust"];
+        if HIDDEN_FUNC
+            .iter()
+            .any(|&f| f.eq_ignore_ascii_case(function))
+        {
+            my_print.input.push(function.into());
+            my_ferris(&mut my_print);
+        } else {
+            my_print.input.push("Rust".into());
+            my_ferris(&mut my_print);
+            // default
+            my_print.print(format!("<{}>", function));
+            my_print.print(" ");
+            my_print.print(format!("<{}>", data));
+        }
     }
     my_print.flush()
 }
@@ -98,7 +105,7 @@ pub fn my_rust(function: &str, data: &str) -> String {
 // hi, rust and ferris
 fn my_ferris(print_out: &mut MyPrint) {
     // get func and name
-    let mut func: String = print_out.input.pop().unwrap_or("Rustaceans".to_string());
+    let mut func: String = print_out.input.pop().unwrap_or("Rust".to_string());
     if func.is_empty() {
         func = "Rust".to_string();
     }
