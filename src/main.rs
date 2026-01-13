@@ -178,14 +178,22 @@ impl eframe::App for MyApp {
 
                 // input data 1
                 let function_label = ui.label("Function: ");
-                ui.text_edit_singleline(&mut self.function)
-                    .labelled_by(function_label.id);
+                egui::Frame::NONE
+                    .stroke(egui::Stroke::new(1.0, egui::Color32::LIGHT_GRAY))
+                    .show(ui, |ui| {
+                        ui.text_edit_singleline(&mut self.function)
+                            .labelled_by(function_label.id)
+                    });
                 ui.add_space(5.0);
 
                 // input data 2
                 let data_label = ui.label("Data: ");
-                ui.text_edit_singleline(&mut self.data)
-                    .labelled_by(data_label.id);
+                egui::Frame::NONE
+                    .stroke(egui::Stroke::new(1.0, egui::Color32::LIGHT_GRAY))
+                    .show(ui, |ui| {
+                        ui.text_edit_singleline(&mut self.data)
+                            .labelled_by(data_label.id)
+                    });
 
                 ui.add_space(5.0);
 

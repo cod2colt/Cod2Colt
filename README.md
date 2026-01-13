@@ -43,10 +43,10 @@ A **game** developed in **Rust** using **egui**, following the **MVVM** architec
 ```mermaid
 flowchart LR
     0["Basic"]
-    A["x86 ASM/MASM"]
+    A["x86 ASM / MASM"]
     B["C"]
     C["DSP ASM"]
-    D["C++/C#"]
+    D["C++ / C#"]
     E["Python"]
     F["Rust"]
     G["Matlab"]
