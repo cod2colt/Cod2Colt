@@ -1,4 +1,4 @@
-## Hi there 👋
+# Hi there 👋
 
 # 🐠 Cod ⇢ Colt 🐎
 
@@ -36,3 +36,50 @@ A **game** developed in **Rust** using **egui**, following the **MVVM** architec
 
 [![YouTube](https://img.shields.io/badge/YouTube-Cod2Colt-red?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@Cod2Colt) 
 
+
+# 🧑‍🌾 My Profile of Coding Farmer
+
+## **🌾 My Road as the Coding Farmer**
+```mermaid
+flowchart LR
+    0["Basic"]
+    A["x86 ASM/MASM"]
+    B["C"]
+    C["DSP ASM"]
+    D["C++/C#"]
+    E["Python"]
+    F["Rust"]
+    G["Matlab"]
+    H["Future ?"]
+
+    0 -.-> B 
+    A -.-> B --> C -.-> F -.-> H
+    B --> D --> F
+    D -.-> E -.-> H
+    B --> G --> E
+    
+```
+
+## **🗂️ My Struggles of Version Control**
+```mermaid
+flowchart LR
+    A["zip"]
+    B["CVS"]
+    C["SourceSafe"]
+    D["SVN"]
+    E["Git"]
+
+    A --> B --> C --> D --> E
+```
+
+## **🐛 My Stages of Debugging Grief**
+```mermaid
+flowchart LR
+    A["printf"]
+    B["ICE / JTAG / LA"]
+    D["Dump"]
+    E["SVC"]
+    F["Read the Code"]
+
+    A --> B --> D --> E --> F
+```
