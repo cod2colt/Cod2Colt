@@ -52,10 +52,12 @@ flowchart LR
     G["Matlab"]
     H["Future ?"]
 
-    0 -.-> B 
-    A -.-> B --> C -.-> F -.-> H
-    B --> D --> F
-    D -.-> E -.-> H
+    A --> C
+    A --> B
+    0 --> B 
+    B --> D --> F -.-> H
+    B --> C
+    E -.-> H
     B --> G --> E
     
 ```
