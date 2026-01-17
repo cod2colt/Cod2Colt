@@ -4,6 +4,7 @@
 
 **🦀 A Rust Project 🦀**  
 **🖥️ A Code Farmer’s Rebirth ⌨️**  
+[ **📧 Email: cod2colt@gmail.com 📨**](mailto:cod2colt@gmail.com)
 
 - 🌱 Here's a code farmer's rebirth from Cod to Colt
 - 🔭 Here's currently working on studying coding
@@ -43,7 +44,7 @@ A **game** developed in **Rust** using **egui**, following the **MVVM** architec
 ```mermaid
 flowchart LR
     0["Basic"]
-    A["x86 ASM / MASM"]
+    A["x86 ASM/MASM"]
     B["C"]
     C["DSP ASM"]
     D["C++ / C#"]

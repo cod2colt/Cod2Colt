@@ -478,3 +478,26 @@ fn my_error(print_out: &mut MyPrint) {
     });
     print_out.print_line(format!("age = {}", age));
 }
+
+// pop function
+pub struct MyPop {
+    pub pop_enable: bool,
+    pub pop_message: String,
+    pub pop_input: String,
+}
+impl MyPop {
+    pub fn new() -> MyPop {
+        Self {
+            pop_enable: false,
+            pop_message: "Hello Pop".to_owned(),
+            pop_input: "".to_owned(),
+        }
+    }
+
+    pub fn my_pop(&mut self) {
+        let mut message = MyPrint::new();
+        message.print_line("Hello, Pop!");
+        message.print_line(&self.pop_input);
+        self.pop_message = message.flush();
+    }
+}

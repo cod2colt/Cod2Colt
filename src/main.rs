@@ -10,7 +10,7 @@ use std::time::{Duration, Instant};
 mod customfonts;
 use customfonts::setup_custom_fonts;
 mod myrust;
-use myrust::my_rust;
+use myrust::{MyPop, my_rust};
 
 // thread
 #[derive(Debug, Clone, Copy)]
@@ -50,6 +50,7 @@ struct MyApp {
     output_buffer: String,
     counter: f64,
     hello: bool,
+    pop: MyPop,
 }
 
 // impl methods fro my app
@@ -124,6 +125,8 @@ impl MyApp {
             }
         });
 
+        // my pop
+        let pop = MyPop::new();
         // default data
         Self {
             rx,
@@ -133,6 +136,43 @@ impl MyApp {
             output_buffer: "Hello Rust World".to_owned(),
             counter: 0.0,
             hello: true,
+            pop,
+        }
+    }
+    // pop windows
+    fn pop_func(&mut self, ctx: &egui::Context) {
+        if self.pop.pop_enable {
+            egui::Window::new("Advance Functions")
+                .collapsible(false)
+                .show(ctx, |ui| {
+                    ui.horizontal(|ui| {
+                        // input cmd/data
+                        let data_label = ui.label("Data: ");
+                        egui::Frame::NONE
+                            .stroke(egui::Stroke::new(1.0, egui::Color32::LIGHT_GRAY))
+                            .show(ui, |ui| {
+                                ui.text_edit_singleline(&mut self.pop.pop_input)
+                                    .labelled_by(data_label.id)
+                            });
+
+                        // enter
+                        if ui.button("Enter").clicked() {
+                            self.pop.pop_input = "".to_string();
+                        }
+                        ui.add_space(100.0);
+                        // exit
+                        if ui.button("Exit").clicked() {
+                            self.pop.pop_enable = false;
+                        }
+                    });
+                    ui.add_sized(
+                        egui::vec2(480.0, 320.0),
+                        egui::Label::new(egui::RichText::new(&self.pop.pop_message).monospace()),
+                    );
+
+                    // run my pop func
+                    self.pop.my_pop();
+                });
         }
     }
 }
@@ -232,8 +272,17 @@ impl eframe::App for MyApp {
                     ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                 };
             });
-            // add test code run buttons
+            // add command buttons
             ui.horizontal(|ui| {
+                // add pop button
+                let run_button = Button::new(RichText::new("Pop").size(16.0));
+                if ui.add(run_button).clicked() {
+                    self.pop.pop_enable = true;
+                }
+                // show pop
+                self.pop_func(ctx);
+
+                // add test code run buttons
                 for my_fun in myrust::MY_TEST_FUN.iter() {
                     let run_button = Button::new(RichText::new(my_fun.name).size(16.0));
                     if ui.add(run_button).clicked() {
