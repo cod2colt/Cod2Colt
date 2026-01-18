@@ -5,6 +5,8 @@ edition = "2024"
 rust-version = "1.92"
 
 [dependencies]
+chrono = "0.4.43"
 eframe = { version = "0.33.3", features = ["default"]}
 egui_extras = { version = "0.33.3", features = ["default", "image"]}
 font-kit = "0.14.3"
+rusqlite = "0.38.0"

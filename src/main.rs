@@ -11,6 +11,8 @@ mod customfonts;
 use customfonts::setup_custom_fonts;
 mod myrust;
 use myrust::{MyPop, my_rust};
+mod mysqlite;
+use mysqlite::MySQLite;
 
 // thread
 #[derive(Debug, Clone, Copy)]
@@ -51,6 +53,7 @@ struct MyApp {
     counter: f64,
     hello: bool,
     pop: MyPop,
+    sqlite: MySQLite,
 }
 
 // impl methods fro my app
@@ -127,6 +130,8 @@ impl MyApp {
 
         // my pop
         let pop = MyPop::new();
+        // my sqlite
+        let sqlite = MySQLite::new().expect("Failed to init SQLite");
         // default data
         Self {
             rx,
@@ -137,12 +142,14 @@ impl MyApp {
             counter: 0.0,
             hello: true,
             pop,
+            sqlite,
         }
     }
+
     // pop windows
     fn pop_func(&mut self, ctx: &egui::Context) {
         if self.pop.pop_enable {
-            egui::Window::new("Advance Functions")
+            egui::Window::new("Pop Messages")
                 .collapsible(false)
                 .show(ctx, |ui| {
                     ui.horizontal(|ui| {
@@ -172,6 +179,67 @@ impl MyApp {
 
                     // run my pop func
                     self.pop.my_pop();
+                });
+        }
+    }
+
+    // my sqlite
+    fn pop_my_sqlite(&mut self, ctx: &egui::Context) {
+        if self.sqlite.enable {
+            egui::Window::new("My SQLite")
+                .collapsible(false)
+                .show(ctx, |ui| {
+                    // input cmd/data
+                    ui.horizontal(|ui| {
+                        let data_label = ui.label(egui::RichText::new("Input:").monospace());
+                        egui::Frame::NONE
+                            .stroke(egui::Stroke::new(1.0, egui::Color32::LIGHT_GRAY))
+                            .show(ui, |ui| {
+                                ui.text_edit_singleline(&mut self.sqlite.input)
+                                    .labelled_by(data_label.id)
+                            });
+                    });
+                    // Add
+                    ui.horizontal(|ui| {
+                        if ui.button(egui::RichText::new("Add").monospace()).clicked() {
+                            self.sqlite.state = mysqlite::SQLiteState::Add;
+                            self.sqlite.enable = true;
+                        }
+
+                        // Delete
+                        if ui
+                            .button(egui::RichText::new("Delete").monospace())
+                            .clicked()
+                        {
+                            self.sqlite.state = mysqlite::SQLiteState::Delete;
+                        }
+
+                        // Toggle
+                        if ui
+                            .button(egui::RichText::new("Toggle").monospace())
+                            .clicked()
+                        {
+                            self.sqlite.state = mysqlite::SQLiteState::Toggle;
+                        }
+
+                        // list
+                        if ui.button(egui::RichText::new("List").monospace()).clicked() {
+                            self.sqlite.state = mysqlite::SQLiteState::List;
+                        }
+                        ui.add_space(200.0);
+                        // exit
+                        if ui.button(egui::RichText::new("Exit").monospace()).clicked() {
+                            self.sqlite.enable = false;
+                        }
+                    });
+                    ui.allocate_ui(egui::vec2(480.0, 320.0), |ui| {
+                        ui.horizontal(|ui| {
+                            ui.label(egui::RichText::new(&self.sqlite.output).monospace());
+                        });
+                    });
+
+                    // run my pop func
+                    self.sqlite.my_sqlite();
                 });
         }
     }
@@ -281,6 +349,14 @@ impl eframe::App for MyApp {
                 }
                 // show pop
                 self.pop_func(ctx);
+
+                // add my sqlite button
+                let run_button = Button::new(RichText::new("SQLite").size(16.0));
+                if ui.add(run_button).clicked() {
+                    self.sqlite.enable = true;
+                }
+                // show my sqlite
+                self.pop_my_sqlite(ctx);
 
                 // add test code run buttons
                 for my_fun in myrust::MY_TEST_FUN.iter() {
