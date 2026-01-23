@@ -23,6 +23,10 @@
 Practice idiomatic **Rust** and build a gui app
 - [**🎮 FlyRust**](https://github.com/cod2colt/FlyRust)  
 A **game** developed in **Rust** using **egui**, following the **MVVM** architecture.
+- [**🪝 MyGitHooks**](https://github.com/cod2colt/MyGitHooks.git)  
+MyGitHooks is a Python-based toolset for managing git repository hooks and automated email notifications.
+
+
 
 ## Development Environment
 [![Rust](https://img.shields.io/badge/Rust-DEA584?style=for-the-badge&logo=rust&logoColor=black)](https://www.rust-lang.org/)
