@@ -203,7 +203,6 @@ impl MyApp {
                     ui.horizontal(|ui| {
                         if ui.button(egui::RichText::new("Add").monospace()).clicked() {
                             self.sqlite.state = mysqlite::SQLiteState::Add;
-                            self.sqlite.enable = true;
                         }
 
                         // Delete

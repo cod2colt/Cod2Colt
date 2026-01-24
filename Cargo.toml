@@ -9,4 +9,5 @@ chrono = "0.4.43"
 eframe = { version = "0.33.3", features = ["default"]}
 egui_extras = { version = "0.33.3", features = ["default", "image"]}
 font-kit = "0.14.3"
-rusqlite = "0.38.0"
+rusqlite = { version = "0.38.0", features = ["bundled"] }
+
