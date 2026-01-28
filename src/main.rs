@@ -13,6 +13,7 @@ mod myrust;
 use myrust::{MyPop, my_rust};
 mod mysqlite;
 use mysqlite::MySQLite;
+mod mysorting;
 
 // thread
 #[derive(Debug, Clone, Copy)]

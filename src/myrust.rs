@@ -1,3 +1,5 @@
+use crate::mysorting::{sort_bubble, sort_insert};
+
 // my print
 pub struct MyPrint {
     input: Vec<String>,
@@ -47,7 +49,7 @@ pub struct MyFunction {
 }
 
 // my test function
-pub const MY_TEST_FUN: [MyFunction; 5] = [
+pub const MY_TEST_FUN: [MyFunction; 7] = [
     MyFunction {
         name: "Clear",
         func: my_clear,
@@ -67,6 +69,14 @@ pub const MY_TEST_FUN: [MyFunction; 5] = [
     MyFunction {
         name: "Error",
         func: my_error,
+    },
+    MyFunction {
+        name: "Bubble Sort",
+        func: sort_bubble,
+    },
+    MyFunction {
+        name: "Insert Sort",
+        func: sort_insert,
     },
 ];
 
